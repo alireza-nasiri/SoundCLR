@@ -72,12 +72,6 @@ class SupConLoss(nn.Module):
         
         
 		# calculating weights for each class
-		#labels_sum = torch.bincount(labels.squeeze(1))
-		#temp_ones = torch.ones(labels_sum.shape).to(device)
-		#per_sample_freq_weights = torch.gather(labels_sum, 0, labels.squeeze(1)) 
-		#temp_nom = (torch.ones(batch_size) * batch_size).to(device)
-		#per_sample_freq_weights = torch.div(temp_nom, per_sample_freq_weights)
-		#per_sample_freq_weights = F.normalize(per_sample_freq_weights, p=1, dim =0)
 		per_sample_weights = torch.gather(self.class_weights, 0, labels.squeeze(1))
         
         
