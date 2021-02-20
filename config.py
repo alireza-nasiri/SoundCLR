@@ -2,6 +2,14 @@ ESC_10 = False
 ESC_50 = True
 US8K = False
 
+
+path_to_ESC50 = './data/ESC50'
+path_to_ESC10 = './data/ESC10'
+path_to_US8K = './data/US8K'
+
+path_to_classifierModel = './data/results/2020-12-22-10-42/'
+
+
 ESC10_classIds = [0, 1, 10, 11, 12, 20, 21, 38, 40, 41]
 
 
@@ -12,17 +20,17 @@ else:
 
 
 if ESC_10 or ESC_50:
-	lr = 5e-4 #for ESC datasets: 5e-4, for US8K: 1e-4
+	lr = 5e-4 #for ESC-50 and ESC-10
 	folds = 5
-	train_folds = [1, 2, 3, 5]
-	test_fold = [4]
+	test_fold = 1
+	train_folds = list(i for i in range(1, 6) if i != test_fold)	
 else:
 	lr = 1e-4 # for US8K
 	fold = 10
-	train_folds =[1, 2, 3, 4, 5, 6, 7, 8, 9]
 	test_fold = [1]
+	train_folds = list(i for i in range(1, 11) if i != test_fold)	
+	
 
-supCon_path_for_classifier = './data/results/2020-12-22-10-42/'
 
 temperature = 0.05
 alpha = 0.5
