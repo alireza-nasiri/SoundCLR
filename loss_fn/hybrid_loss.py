@@ -1,14 +1,14 @@
 import torch
 import torch.nn as nn
 
-import loss as contrastive_loss
+import contrastive_loss
 import config
 
 class HybridLoss(nn.Module):
-	def __init__(self, weights):
+	def __init__(self, alpha=0.5):
 		super(HybridLoss, self).__init__()
-		self.contrastive_loss = contrastive_loss.SupConLoss(weights=weights)
-		self.class_weights = weights
+		self.contrastive_loss = contrastive_loss.SupConLoss()
+		self.alpha = alpha
     
 	def cross_entropy_one_hot(self, input, target):
 		_, labels = target.max(dim=1)
@@ -17,7 +17,7 @@ class HybridLoss(nn.Module):
     
 	def forward(self, y_proj, y_pred, label, label_vec):
         
-		loss1 = self.contrastive_loss(y_proj.unsqueeze(1), label.squeeze(1))
-		loss2 = self.cross_entropy_one_hot(y_pred, label_vec)
+		contrastiveLoss = self.contrastive_loss(y_proj.unsqueeze(1), label.squeeze(1))
+		entropyLoss = self.cross_entropy_one_hot(y_pred, label_vec)
         
-		return loss1 * config.alpha, loss2 * (1 - config.alpha)
+		return contrastiveLoss * self.alpha, entropyLoss * (1 - self.alpha)
