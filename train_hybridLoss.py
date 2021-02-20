@@ -7,8 +7,6 @@ import datetime
 import sys
 import torch.nn.functional as F
 import torchvision
-import matplotlib.pyplot as plt
-from matplotlib import gridspec
 
 
 import model_classifier
