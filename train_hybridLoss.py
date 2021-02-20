@@ -34,9 +34,6 @@ device = torch.device("cuda" if use_cuda else "cpu")
 pretrained_model =torchvision.models.resnet50(pretrained=True).to(device)
 pretrained_model.fc = nn.Sequential(nn.Identity())
 
-#pretrained_model =torchvision.models.densenet201(pretrained=True).to(device)
-#pretrained_model.classifier = nn.Identity()
-
 pretrained_model = nn.DataParallel(pretrained_model, device_ids=[0, 1]) #
 pretrained_model = pretrained_model.to(device)
 
@@ -47,15 +44,7 @@ classifier = model_classifier.Classifier().to(device)
 train_loader, val_loader = dataset.create_generators()
 
 
-if config.US8K:
-	#class_weights = dataset.getClassWeights()
-	class_weights = torch.ones(config.class_numbers)
-	class_weights = class_weights.to(device)
-else:
-        class_weights = torch.ones(config.class_numbers).to(device)
-
-
-loss_fn = hybrid_loss.HybridLoss(weights=class_weights).to(device)
+loss_fn = hybrid_loss.HybridLoss().to(device)
 
 
 optimizer = torch.optim.AdamW(list(pretrained_model.parameters())+list(projection_layer.parameters())+
