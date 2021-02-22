@@ -11,12 +11,10 @@ import config
 class SupConLoss(nn.Module):
 	"""Supervised Contrastive Learning: https://arxiv.org/pdf/2004.11362.pdf.
 	It also supports the unsupervised contrastive loss in SimCLR"""
-	def __init__(self, weights, temperature=config.temperature, base_temperature=config.temperature):
+	def __init__(self, temperature=0.07, base_temperature=0.07):
 		super(SupConLoss, self).__init__()
 		self.temperature = temperature
 		self.base_temperature = base_temperature
-		self.class_weights = weights
-		#self.temperature =  nn.Parameter(torch.tensor(0.07, dtype=torch.float64, requires_grad=True))
         
         
 	def forward(self, features, labels=None, mask=None):
@@ -75,9 +73,6 @@ class SupConLoss(nn.Module):
 		logits = anchor_dot_contrast - logits_max.detach()
         
         
-		# calculating weights for each class
-		per_sample_weights = torch.gather(self.class_weights, 0, labels.squeeze(1))
-        
         
 		# tile mask as much as number of positives per sample
 		mask = mask.repeat(anchor_count, contrast_count)
@@ -98,8 +93,7 @@ class SupConLoss(nn.Module):
         
 		# loss
 		loss = - (self.temperature / self.base_temperature) * mean_log_prob_pos
-		
-		loss = loss * per_sample_weights		
+			
 
 		loss = loss.view(anchor_count, batch_size).mean()
         
