@@ -1,13 +1,11 @@
 import torch
 import torch.nn as nn
-import numpy as np
-import os
-import shutil
-import datetime
-import sys
 import torch.nn.functional as F
 import torchvision
-import librosa
+import numpy as np
+import os
+import datetime
+import sys
 
 import model_classifier
 from utils import EarlyStopping, WarmUpExponentialLR
@@ -23,37 +21,28 @@ elif config.US8K:
 
 use_cuda = torch.cuda.is_available()
 device = torch.device("cuda" if use_cuda else "cpu")
-print(device)
-print(torch.cuda.current_device())
-
-main_model =torchvision.models.resnet50(pretrained=True).to(device)
-#main_model.conv1 = nn.Conv2d(1, 64, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False)
-
-main_model.fc = nn.Sequential(nn.Identity())
 
 
-main_model = nn.DataParallel(main_model, device_ids=[0,1])
-main_model = main_model.to(device)
-main_model = main_model.train()
+model =torchvision.models.resnet50(pretrained=True).to(device)
+model.fc = nn.Sequential(nn.Identity())
+
+
+model = nn.DataParallel(model, device_ids=[0,1])
+model = model.to(device)
+
 
 classifier = model_classifier.Classifier().to(device)
 
 
 train_loader, val_loader = dataset.create_generators()
 
-if config.US8K:
-	#class_weights = dataset.getClassWeights()
-	class_weights = torch.ones(config.class_numbers).to(device)
-	class_weights = class_weights.to(device)
-else:
-	class_weights = torch.ones(config.class_numbers).to(device)
 
 
-root = './data/results/'
+
+root = './results/'
 main_path = root + str(datetime.datetime.now().strftime('%Y-%m-%d-%H-%M'))
 if not os.path.exists(main_path):
 	os.mkdir(main_path)
-shutil.copy('baseline_train.py', main_path )
 
 classifier_path = main_path + '/' + 'classifier'
 os.mkdir(classifier_path)
@@ -83,7 +72,7 @@ def cross_entropy_one_hot(input, target):
 
 
 
-def train():
+def train_crossEntropy():
 	num_epochs = 800
 	with open(main_path + '/results.txt','w', 1) as output_file:
 		mainModel_stopping = EarlyStopping(patience=300, verbose=True, log_path=main_path, output_file=output_file)
@@ -110,9 +99,7 @@ def train():
 
 
 		for epoch in range(num_epochs):
-			print('\n' + str(optimizer.param_groups[0]["lr"]), file=output_file)
-        
-			main_model.train()
+			model.train()
 			classifier.train()
         
 			train_loss = []
@@ -127,7 +114,7 @@ def train():
 				label = label.to(device).unsqueeze(1)
 				label_vec = hotEncoder(label)
             
-				y_rep = main_model(inp)
+				y_rep = model(inp)
 				y_rep = F.normalize(y_rep, dim=0)
             
 				y_pred = classifier(y_rep)
@@ -145,7 +132,7 @@ def train():
 			val_corrects = 0
 			val_samples_count = 0
         
-			main_model.eval()
+			model.eval()
 			classifier.eval()
         
 			with torch.no_grad():
@@ -154,7 +141,7 @@ def train():
 					label = val_label.to(device)
 					label_vec = hotEncoder(label)
                 
-					y_rep = main_model(inp)
+					y_rep = model(inp)
 					y_rep = F.normalize(y_rep, dim=0)
 
 					y_pred = classifier(y_rep)
@@ -181,13 +168,6 @@ def train():
 				return
 
 
-
-train()
-
-
-
-
-
-
-
+if __name__ == "__main__":
+	train_crossEntropy()
 
