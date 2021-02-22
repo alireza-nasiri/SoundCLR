@@ -42,15 +42,8 @@ projection_head = model_projection.ProjectionModel().to(device)
 train_loader, val_loader = dataset.create_generators()
 
 
-if config.US8K:
-	#class_weights = dataset.getClassWeights()
-	class_weights = torch.ones(config.class_numbers)
-	class_weights = class_weights.to(device)
-else:
-        class_weights = torch.ones(config.class_numbers).to(device)
 
-
-
+# defining supervised contrastive loss
 loss_fn = loss.SupConLoss(temperature = config.temperature)
 
 optimizer = torch.optim.AdamW(list(model.parameters()) + list(projection_head.parameters()),
@@ -60,15 +53,11 @@ scheduler = WarmUpExponentialLR(optimizer, cold_epochs= 0, warm_epochs= config.w
 
 
 
-
-root = './data/results/'
+# creating a folder to save the reports and models
+root = './results/'
 main_path = root + str(datetime.datetime.now().strftime('%Y-%m-%d-%H-%M'))
 if not os.path.exists(main_path):
 	os.mkdir(main_path)
-
-shutil.copy('train_mainModel_supCon.py', main_path)
-
-
 
 
 
@@ -80,7 +69,7 @@ def hotEncoder(v):
 
 
 
-def train():
+def train_contrastive():
 	num_epochs = 800
 	with open(main_path + '/results.txt','w', 1) as output_file:
 		mainModel_stopping = EarlyStopping(patience=300, verbose=True, log_path=main_path, output_file=output_file)
@@ -172,7 +161,8 @@ def train():
 
 
 
-train()
+if __name__ == "__main__":
+	train_contrastive()
 
 
 
