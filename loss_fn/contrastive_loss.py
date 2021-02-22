@@ -1,3 +1,7 @@
+'''
+This implementation is from https://github.com/HobbitLong/SupContrast with small modifications.
+'''
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
