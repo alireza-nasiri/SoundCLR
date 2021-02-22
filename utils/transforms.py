@@ -151,9 +151,7 @@ class FrequencyMask():
             start = random.randint(0, wave.shape[1] - mask_len) #start of the mask
             end = start + mask_len
             wave[:, start:end, : ] = 0
-            #print('freq')
-            #print(start)
-            #print(end)
+            
         return wave
     
     def __call__(self, wave):
@@ -177,9 +175,7 @@ class TimeMask():
             start = random.randint(0, wave.shape[2] - mask_len) #start of the mask
             end = start + mask_len
             wave[ : , : , start:end] = 0
-            #print('time')
-            #print(start)
-            #print(end)
+            
         return wave
     
     def __call__(self, wave):
