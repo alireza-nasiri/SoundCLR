@@ -1,0 +1,9 @@
+# requirements file
+
+### BEGIN ###
+python>=3.7
+pytorch>=1.4.0
+torchvision>=0.8.1
+Numpy>=1.19.2
+librosa>=0.8.0
+### END ###
