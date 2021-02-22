@@ -11,10 +11,9 @@ import config
 class SupConLoss(nn.Module):
 	"""Supervised Contrastive Learning: https://arxiv.org/pdf/2004.11362.pdf.
 	It also supports the unsupervised contrastive loss in SimCLR"""
-	def __init__(self, temperature=0.07, base_temperature=0.07):
+	def __init__(self, temperature=0.07):
 		super(SupConLoss, self).__init__()
 		self.temperature = temperature
-		self.base_temperature = base_temperature
         
         
 	def forward(self, features, labels=None, mask=None):
@@ -92,7 +91,7 @@ class SupConLoss(nn.Module):
 		mean_log_prob_pos = (mask * log_prob).sum(1) / (mask.sum(1)+eps)
         
 		# loss
-		loss = - (self.temperature / self.base_temperature) * mean_log_prob_pos
+		loss = -  mean_log_prob_pos
 			
 
 		loss = loss.view(anchor_count, batch_size).mean()
