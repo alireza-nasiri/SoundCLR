@@ -51,7 +51,7 @@ else:
 
 
 
-loss_fn = loss.SupConLoss(weights=class_weights)
+loss_fn = loss.SupConLoss(temperature = config.temperature)
 
 optimizer = torch.optim.AdamW(list(model.parameters()) + list(projection_head.parameters()),
 	lr=config.lr, weight_decay=1e-3) 
