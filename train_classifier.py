@@ -55,7 +55,7 @@ optimizer = torch.optim.AdamW(list(classifier.parameters()), lr=config.lr,  weig
 
 scheduler = WarmUpExponentialLR(optimizer, cold_epochs= 0, warm_epochs= config.warm_epochs, gamma=0.995) 
 
-
+# to save the parameters for the classifier
 classifier_path = main_path + 'classifier/'
 if not os.path.exists(classifier_path):
 	os.mkdir(classifier_path)
@@ -82,7 +82,7 @@ def cross_entropy_one_hot(input, target):
 
 
 
-def train():
+def train_classifier():
 	num_epochs = 800
 
 	with open(main_path + '/classifier_results.txt','w', 1) as output_file:
@@ -178,11 +178,5 @@ def train():
 
 
 
-
-train()
-
-
-
-
-
-
+if __name__ == "__main__":
+	train_classifier()
