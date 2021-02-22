@@ -2,7 +2,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils import data
-#import torchvision.transforms as transforms
 import transforms
 import torchvision
 
@@ -27,7 +26,7 @@ device = torch.device("cuda" if use_cuda else "cpu")
 class MyDataset(data.Dataset):
     
 	def __init__(self, train=True):
-		self.root = '/work/anasiri/CPC_audio_spectrograms/data/UrbanSound8K/audio/'
+		self.root = '/data/US8K/audio/'
 		self.train = train
         
 		self.file_paths = [] #only includes the name of the fold and name of the file, like: 'fold2/4201-3-0-0.wav'
@@ -84,7 +83,8 @@ class MyDataset(data.Dataset):
         
 		if wave.ndim == 1:
 			wave = wave[:, np.newaxis]
-
+		
+		# normalizing waves to [-1, 1]
 		if np.abs(wave.max()) > 1.0:
 			wave = transforms.scale(wave, wave.min(), wave.max(), -1.0, 1.0)
 		wave = wave.T * 32768.0
@@ -98,7 +98,6 @@ class MyDataset(data.Dataset):
 		wave.squeeze_(0)
         
 		s = librosa.feature.melspectrogram(wave.numpy(), sr=rate, n_mels=128, n_fft=1024, hop_length=512) 
-		#s = librosa.feature.melspectrogram(wave.numpy(), sr=rate, n_mels=128, n_fft=2048, hop_length=561, win_length=1654) 
 
 		log_s = librosa.power_to_db(s, ref=np.max)
         
@@ -109,32 +108,8 @@ class MyDataset(data.Dataset):
         	
 		return file_path, spec, class_id 
     
-
-
-def getClassWeights():
-	class_counts = collections.defaultdict(int)
-	total_samples = 0
-	class_weights = [0] * 10
-    
-    
-	root = '/work/anasiri/CPC_audio_spectrograms/data/UrbanSound8K/audio/'
-	for f in config.train_folds:
-		file_names = os.listdir(root + 'fold' + str(f) + '/' )
-		for name in file_names:
-			if name.split('.')[-1] == 'wav':
-				class_counts[int(name.split('-')[1])] += 1
-				total_samples += 1
-
-	for key in class_counts.keys():
-		score = math.log(0.1*total_samples/float(class_counts[key]))
-		class_weights[key] = score if score > 1.0 else 1.0
-        
-	return torch.tensor(class_weights, dtype=torch.float)    
-    
-    
-    
-    
-    
+ 
+  
 
 def create_generators():
     
@@ -147,20 +122,6 @@ def create_generators():
     
 	return train_loader, test_loader
     
-    
-	'''
-	overall_dataset = MyDataset(train=True)
-    
-    
-	train_dataset, val_dataset = data.random_split(overall_dataset, [int(len(overall_dataset)*0.8), 
-                                                                         len(overall_dataset)-int(len(overall_dataset)*0.8)])
-	train_loader = data.DataLoader(train_dataset, batch_size = config.batch_size, shuffle=True, num_workers=1,drop_last=True)
-    
-	val_loader = data.DataLoader(val_dataset, batch_size = config.batch_size, shuffle=True, num_workers = 1,drop_last=True)
-    
-	return train_loader, val_loader
-    
-	'''
 
 
 
