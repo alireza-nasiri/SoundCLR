@@ -52,8 +52,8 @@ class MyDataset(data.Dataset):
                                                                   transforms.RandomCrop(out_len = 176400)])
              
 			self.spec_transforms = torchvision.transforms.Compose([torchvision.transforms.ToTensor(),
-                                                                   transforms.FrequencyMask(),
-                                                                   transforms.TimeMask()])
+                                                                   transforms.FrequencyMask(max_width = config.freq_masks_width, numbers = config.freq_masks),
+                                                                   transforms.TimeMask(max_width = config.time_masks_width, numbers = config.time_masks)])
             
             
 		else: #for test
