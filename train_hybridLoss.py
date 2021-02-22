@@ -1,19 +1,17 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
+import torchvision
 import numpy as np
 import os
 import shutil
 import datetime
 import sys
-import torch.nn.functional as F
-import torchvision
-
 
 import model_classifier
 import model_projection
 from utils import EarlyStopping, WarmUpExponentialLR
 import config
-import loss
 import hybrid_loss
 
 if config.ESC_10:
@@ -31,11 +29,11 @@ device = torch.device("cuda" if use_cuda else "cpu")
 
 
 
-pretrained_model =torchvision.models.resnet50(pretrained=True).to(device)
-pretrained_model.fc = nn.Sequential(nn.Identity())
+model =torchvision.models.resnet50(pretrained=True).to(device)
+model.fc = nn.Sequential(nn.Identity())
 
-pretrained_model = nn.DataParallel(pretrained_model, device_ids=[0, 1]) #
-pretrained_model = pretrained_model.to(device)
+model = nn.DataParallel(model, device_ids=[0, 1]) 
+model = model.to(device)
 
 
 projection_layer = model_projection.ProjectionModel().to(device)
@@ -47,7 +45,7 @@ train_loader, val_loader = dataset.create_generators()
 loss_fn = hybrid_loss.HybridLoss(alpha = config.alpha, temperature = config.temperature).to(device)
 
 
-optimizer = torch.optim.AdamW(list(pretrained_model.parameters())+list(projection_layer.parameters())+
+optimizer = torch.optim.AdamW(list(model.parameters())+list(projection_layer.parameters())+
                             list(classifier.parameters()), lr=config.lr, weight_decay=1e-3)
 
 scheduler = WarmUpExponentialLR(optimizer, cold_epochs= 0, warm_epochs= config.warm_epochs, gamma=config.gamma)
@@ -56,23 +54,11 @@ scheduler = WarmUpExponentialLR(optimizer, cold_epochs= 0, warm_epochs= config.w
 
 
 
-def createFolder():
-	root = './data/results/'
-	main_path = root + str(datetime.datetime.now().strftime('%Y-%m-%d-%H-%M'))
-	fig_path = main_path + '/' + 'figures/'
-    
-	if not os.path.exists(main_path):
-		os.mkdir(main_path)
-	if not os.path.exists(fig_path):
-		os.mkdir(fig_path)
-	return main_path, fig_path
-
-
-
-
-main_path, fig_path = createFolder()
-
-shutil.copy('train_mainModel_parallelSupConAndCrossEntropy.py', main_path)
+# creating a folder to save the reports and models
+root = './results/'
+main_path = root + str(datetime.datetime.now().strftime('%Y-%m-%d-%H-%M'))
+if not os.path.exists(main_path):
+	os.mkdir(main_path)
 
 classifier_path = main_path + '/' + 'classifier'
 os.mkdir(classifier_path)
@@ -89,14 +75,9 @@ def hotEncoder(v):
 
 
 
-def cross_entropy_one_hot(input, target):
-	_, labels = target.max(dim=1)
-	return nn.CrossEntropyLoss()(input, labels)
 
 
-
-
-def train():
+def train_hybrid():
 	num_epochs = 800
     
 	with open(main_path + '/results.txt','w', 1) as output_file:
@@ -124,7 +105,7 @@ def train():
 		for epoch in range(num_epochs):
 			print('\n' + str(optimizer.param_groups[0]["lr"]), file=output_file)
 
-			pretrained_model.train()
+			model.train()
 			projection_layer.train()
 			classifier.train()
 
@@ -142,7 +123,7 @@ def train():
 				label_vec = hotEncoder(label)
             
             
-				y_rep = pretrained_model(x)
+				y_rep = model(x)
 				y_rep = F.normalize(y_rep, dim=0)
                 
 				y_proj = projection_layer(y_rep)
@@ -175,7 +156,7 @@ def train():
 			val_corrects = 0
 			val_samples_count = 0
                 
-			pretrained_model.eval()
+			model.eval()
 			projection_layer.eval()
 			classifier.eval()
                 
@@ -184,7 +165,7 @@ def train():
 					val_x = val_x.float().to(device)
 					label = val_label.to(device).unsqueeze(1)
 					label_vec = hotEncoder(label)
-					y_rep = pretrained_model(val_x)
+					y_rep = model(val_x)
 					y_rep = F.normalize(y_rep, dim=0)
                         
 					y_proj = projection_layer(y_rep)
@@ -216,7 +197,7 @@ def train():
 			print('train_acc is {:.4f} and val_acc is {:.4f}'.format(train_acc, val_acc), file=output_file)
         
 			# add validation checkpoint for early stopping here
-			mainModel_stopping(-val_acc, pretrained_model, epoch+1)
+			mainModel_stopping(-val_acc, model, epoch+1)
 			#proj_stopping(-val_acc, projection_layer, epoch+1)
 			classifier_stopping(-val_acc, classifier, epoch+1)
 			if mainModel_stopping.early_stop:
@@ -224,8 +205,7 @@ def train():
 				return
     
 
-
-
-train()
+if __name__ == "__main__":
+	train_hybrid()
 
 
