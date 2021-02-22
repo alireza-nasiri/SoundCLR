@@ -5,7 +5,7 @@ import torchvision as tv
 import librosa
 
 import random
-import config
+
 
 
 def scale(old_value, old_min, old_max, new_min, new_max):
@@ -137,7 +137,7 @@ class RandomPadding():
     
     
 class FrequencyMask():
-    def __init__(self, max_width = config.freq_masks_width, numbers = config.freq_masks): 
+    def __init__(self, max_width, numbers): 
         super(FrequencyMask, self).__init__()
         
         self.max_width = max_width
@@ -160,7 +160,7 @@ class FrequencyMask():
         
 
 class TimeMask():
-    def __init__(self, max_width = config.time_masks_width, numbers = config.time_masks): 
+    def __init__(self, max_width, numbers): 
         super(TimeMask, self).__init__()
         
         self.max_width = max_width
