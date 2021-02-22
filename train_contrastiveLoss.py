@@ -92,8 +92,6 @@ def train_contrastive():
 		print('*****', file=output_file)
 		
 		for epoch in range(num_epochs):
-			print(optimizer.param_groups[0]["lr"], file=output_file)
-
 			model.train()
 			projection_head.train()
         
