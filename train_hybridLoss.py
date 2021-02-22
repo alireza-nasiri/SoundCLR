@@ -44,7 +44,7 @@ classifier = model_classifier.Classifier().to(device)
 train_loader, val_loader = dataset.create_generators()
 
 
-loss_fn = hybrid_loss.HybridLoss().to(device)
+loss_fn = hybrid_loss.HybridLoss(alpha = config.alpha, temperature = config.temperature).to(device)
 
 
 optimizer = torch.optim.AdamW(list(pretrained_model.parameters())+list(projection_layer.parameters())+
