@@ -35,5 +35,6 @@ To train a classifier with ResNet-50 with hybrid loss:
 $ python train_hybridLoss.py
 ```
 
-###Changing Hyperparameters
-You can change the 
+### Configuration Options
+By modifying config.py file <br>
+You can change the training hyperparameters, the alpha value for the hybrid loss, and maximul-length and number of the masking segments for the data augmentation.
