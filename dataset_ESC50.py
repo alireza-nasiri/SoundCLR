@@ -2,7 +2,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils import data
-#import torchvision.transforms as transforms
 import transforms
 import torchvision
 
