@@ -5,9 +5,9 @@ import contrastive_loss
 import config
 
 class HybridLoss(nn.Module):
-	def __init__(self, alpha=0.5):
+	def __init__(self, alpha=0.5, temperature=0.07):
 		super(HybridLoss, self).__init__()
-		self.contrastive_loss = contrastive_loss.SupConLoss()
+		self.contrastive_loss = contrastive_loss.SupConLoss(temperature)
 		self.alpha = alpha
     
 	def cross_entropy_one_hot(self, input, target):
