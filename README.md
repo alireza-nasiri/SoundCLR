@@ -12,3 +12,16 @@ First, install the above dependencies.
 
 Second, download ESC50 and US8K datasets and put them inside the 'data' directory
 
+###Quickstart
+To train a classifier with ResNet-50 with cross-entropy loss:
+```
+$ python train_crossEntropyLoss.py
+```
+To train a classifier with ResNet-50 with supervised-contrastive loss:
+```
+$ python train_contrastiveLoss.py
+```
+To train a classifier with ResNet-50 with hybrid loss:
+```
+$ python train_hybridLoss.py
+```
