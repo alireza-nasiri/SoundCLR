@@ -9,9 +9,9 @@ import torch.nn.functional as F
 import torchvision
 from torch.optim import lr_scheduler
 
-import model_classifier
-import model_projection
-from utils import EarlyStopping
+from models import model_classifier
+from models import model_projection
+from utils.utils import EarlyStopping
 import config
 
 from utils import EarlyStopping, WarmUpExponentialLR
