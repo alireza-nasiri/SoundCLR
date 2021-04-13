@@ -13,7 +13,7 @@ from models import model_projection
 
 from utils.utils import EarlyStopping, WarmUpExponentialLR
 import config
-import loss
+from loss_fn import contrastive_loss
 
 if config.ESC_10:
         import dataset_ESC10 as dataset
@@ -44,7 +44,7 @@ train_loader, val_loader = dataset.create_generators()
 
 
 # defining supervised contrastive loss
-loss_fn = loss.SupConLoss(temperature = config.temperature)
+loss_fn = contrastive_loss.SupConLoss(temperature = config.temperature)
 
 optimizer = torch.optim.AdamW(list(model.parameters()) + list(projection_head.parameters()),
 	lr=config.lr, weight_decay=1e-3) 
