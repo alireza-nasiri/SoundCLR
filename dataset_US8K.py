@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils import data
-import transforms
+from utils import transforms
 import torchvision
 
 import os
@@ -26,7 +26,7 @@ device = torch.device("cuda" if use_cuda else "cpu")
 class MyDataset(data.Dataset):
     
 	def __init__(self, train=True):
-		self.root = '/data/US8K/audio/'
+		self.root = './data/US8K/audio/'
 		self.train = train
         
 		self.file_paths = [] #only includes the name of the fold and name of the file, like: 'fold2/4201-3-0-0.wav'
