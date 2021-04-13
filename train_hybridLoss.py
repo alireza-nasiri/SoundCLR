@@ -8,11 +8,11 @@ import shutil
 import datetime
 import sys
 
-import model_classifier
-import model_projection
-from utils import EarlyStopping, WarmUpExponentialLR
+from models import model_classifier
+from models import model_projection
+from utils.utils import EarlyStopping, WarmUpExponentialLR
 import config
-import hybrid_loss
+from loss_fn import hybrid_loss
 
 if config.ESC_10:
 	import dataset_ESC10 as dataset
@@ -114,7 +114,7 @@ def train_hybrid():
 			train_loss2 = []
 			train_corrects = 0
 			train_samples_count = 0
-			for x, label in train_loader:
+			for _, x, label in train_loader:
 				loss = 0
 				optimizer.zero_grad()
 				
@@ -161,7 +161,7 @@ def train_hybrid():
 			classifier.eval()
                 
 			with torch.no_grad():
-				for val_x, val_label in val_loader:
+				for _, val_x, val_label in val_loader:
 					val_x = val_x.float().to(device)
 					label = val_label.to(device).unsqueeze(1)
 					label_vec = hotEncoder(label)
