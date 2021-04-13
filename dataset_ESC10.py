@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils import data
-import transforms
+from utils import transforms
 import torchvision
 
 import os
@@ -25,11 +25,11 @@ device = torch.device("cuda" if use_cuda else "cpu")
 class MyDataset(data.Dataset):
     
     def __init__(self, train=True):
-        self.root = '/data/ESC50/waves_ESC50/'
+        self.root = './data/ESC50/ESC-50-master/audio/'
         self.train = train
         
         #getting name of all files inside the all of the train_folds
-        temp = open('data/ESC50/ESC10_file_names.txt', 'r').read().split('\n')
+        temp = open('./data/ESC50/ESC10_file_names.txt', 'r').read().split('\n')
         temp.sort()
         self.file_names = []
         if train:
