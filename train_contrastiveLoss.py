@@ -8,10 +8,10 @@ import sys
 import torch.nn.functional as F
 import torchvision
 
-import model_classifier
-import model_projection
+from models import model_classifier
+from models import model_projection
 
-from utils import EarlyStopping, WarmUpExponentialLR
+from utils.utils import EarlyStopping, WarmUpExponentialLR
 import config
 import loss
 
@@ -97,7 +97,7 @@ def train_contrastive():
         
 			train_loss = []
            
-			for x, label in train_loader:
+			for _, x, label in train_loader:
 				batch_loss = 0
 				optimizer.zero_grad()
             
@@ -125,7 +125,7 @@ def train_contrastive():
 			projection_head.eval()
         
 			with torch.no_grad():
-				for val_x, val_label in val_loader:
+				for _, val_x, val_label in val_loader:
 					val_x = val_x.to(device)
 					label = val_label.to(device).unsqueeze(1)
 					label_vec = hotEncoder(label)
