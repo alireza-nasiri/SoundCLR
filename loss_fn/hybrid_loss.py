@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-import contrastive_loss
+from loss_fn import contrastive_loss
 import config
 
 class HybridLoss(nn.Module):
