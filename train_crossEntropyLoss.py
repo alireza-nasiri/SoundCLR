@@ -7,8 +7,8 @@ import os
 import datetime
 import sys
 
-import model_classifier
-from utils import EarlyStopping, WarmUpExponentialLR
+from models import model_classifier
+from utils.utils import EarlyStopping, WarmUpExponentialLR
 import config
 
 if config.ESC_10:
@@ -49,7 +49,7 @@ os.mkdir(classifier_path)
 
 
 
-optimizer = torch.optim.AdamW(list(main_model.parameters())+ list(classifier.parameters()), 
+optimizer = torch.optim.AdamW(list(model.parameters())+ list(classifier.parameters()), 
                              lr=config.lr, weight_decay=1e-3)
 
 scheduler = WarmUpExponentialLR(optimizer, cold_epochs= 0, warm_epochs= config.warm_epochs, gamma=config.gamma)
@@ -106,7 +106,7 @@ def train_crossEntropy():
 			train_corrects = 0
 			train_samples_count = 0
         
-			for x, label in train_loader:
+			for _, x, label in train_loader:
 				loss = 0
 				optimizer.zero_grad()
             
@@ -136,7 +136,7 @@ def train_crossEntropy():
 			classifier.eval()
         
 			with torch.no_grad():
-				for val_x, val_label in val_loader:
+				for _, val_x, val_label in val_loader:
 					inp = val_x.float().to(device)
 					label = val_label.to(device)
 					label_vec = hotEncoder(label)
