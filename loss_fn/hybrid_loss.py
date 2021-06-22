@@ -12,7 +12,7 @@ class HybridLoss(nn.Module):
     
 	def cross_entropy_one_hot(self, input, target):
 		_, labels = target.max(dim=1)
-		return nn.CrossEntropyLoss(weight=self.class_weights)(input, labels)
+		return nn.CrossEntropyLoss()(input, labels)
 		
     
 	def forward(self, y_proj, y_pred, label, label_vec):
