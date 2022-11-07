@@ -1,4 +1,5 @@
 # Contrastive-Learning-in-ESC
+Implementation for the paper <a href="https://arxiv.org/abs/2103.01929">SoundCLR: Contrastive Learning of Representations For Improved Environmental Sound Classification </a>
 <h3> Three Training Schemes For The Audio Classifiers: </h3>
 
 
