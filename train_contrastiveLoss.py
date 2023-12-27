@@ -106,10 +106,10 @@ def train_contrastive():
 				label_vec = hotEncoder(label)
             
 				y_rep = model(x.float())
-				y_rep = F.normalize(y_rep, dim=0)
+				y_rep = F.normalize(y_rep, dim=1)
             
 				y_proj = projection_head(y_rep) 
-				y_proj = F.normalize(y_proj, dim=0)
+				y_proj = F.normalize(y_proj, dim=1)
             
             
 				batch_loss = loss_fn(y_proj.unsqueeze(1), label.squeeze(1))
@@ -132,10 +132,10 @@ def train_contrastive():
                 
                 
 					y_rep = model(val_x.float())
-					y_rep = F.normalize(y_rep, dim=0)
+					y_rep = F.normalize(y_rep, dim=1)
                 
 					y_proj = projection_head(y_rep) 
-					y_proj = F.normalize(y_proj, dim=0)
+					y_proj = F.normalize(y_proj, dim=1)
                 
 					temp = loss_fn(y_proj.unsqueeze(1), label.squeeze(1))
                 
