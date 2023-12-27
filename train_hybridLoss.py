@@ -124,10 +124,10 @@ def train_hybrid():
             
             
 				y_rep = model(x)
-				y_rep = F.normalize(y_rep, dim=0)
+				y_rep = F.normalize(y_rep, dim=1)
                 
 				y_proj = projection_layer(y_rep)
-				y_proj = F.normalize(y_proj, dim=0)
+				y_proj = F.normalize(y_proj, dim=1)
                 
 				y_pred = classifier(y_rep)
             
@@ -166,10 +166,10 @@ def train_hybrid():
 					label = val_label.to(device).unsqueeze(1)
 					label_vec = hotEncoder(label)
 					y_rep = model(val_x)
-					y_rep = F.normalize(y_rep, dim=0)
+					y_rep = F.normalize(y_rep, dim=1)
                         
 					y_proj = projection_layer(y_rep)
-					y_proj = F.normalize(y_proj, dim=0)
+					y_proj = F.normalize(y_proj, dim=1)
                         
 					y_pred = classifier(y_rep)
                             
