@@ -115,7 +115,7 @@ def train_crossEntropy():
 				label_vec = hotEncoder(label)
             
 				y_rep = model(inp)
-				y_rep = F.normalize(y_rep, dim=0)
+				y_rep = F.normalize(y_rep, dim=1)
             
 				y_pred = classifier(y_rep)
             
@@ -142,7 +142,7 @@ def train_crossEntropy():
 					label_vec = hotEncoder(label)
                 
 					y_rep = model(inp)
-					y_rep = F.normalize(y_rep, dim=0)
+					y_rep = F.normalize(y_rep, dim=1)
 
 					y_pred = classifier(y_rep)
                 
