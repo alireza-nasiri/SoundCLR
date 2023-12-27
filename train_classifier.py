@@ -123,7 +123,7 @@ def train_classifier():
 				label_vec = hotEncoder(label)
             
 				y_rep = pretrained_model(x)
-				y_rep = F.normalize(y_rep, dim=0)
+				y_rep = F.normalize(y_rep, dim=1)
             
 				out = classifier(y_rep)
 				loss = cross_entropy_one_hot(out, label_vec) 
@@ -151,7 +151,7 @@ def train_classifier():
 					label_vec = hotEncoder(label)
                 
 					y_rep = pretrained_model(val_x)
-					y_rep = F.normalize(y_rep, dim=0)
+					y_rep = F.normalize(y_rep, dim=1)
                 
 					out = classifier(y_rep)
 					temp = cross_entropy_one_hot(out, label_vec)
