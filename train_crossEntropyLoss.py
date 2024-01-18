@@ -67,7 +67,7 @@ def hotEncoder(v):
 
 def cross_entropy_one_hot(input, target):
 	_, labels = target.max(dim=1)
-	return nn.CrossEntropyLoss(weight=class_weights)(input, labels)
+	return nn.CrossEntropyLoss()(input, labels)
 
 
 
